@@ -1,0 +1,31 @@
+{
+  "name": "event-monolith-app",
+  "type": "module",
+  "scripts": {
+    "dev": "bun --watch src/index.ts",
+    "build": "tsc",
+    "start": "bun dist/index.js",
+    "db:generate": "prisma generate",
+    "db:push": "prisma db push",
+    "db:studio": "prisma studio"
+  },
+  "dependencies": {
+    "@elysiajs/cors": "^0.8.0",
+    "@elysiajs/static": "^1.4.5",
+    "@elysiajs/swagger": "^0.8.0",
+    "@prisma/client": "^5.0.0",
+    "bcryptjs": "^2.4.3",
+    "elysia": "^0.8.0",
+    "jsonwebtoken": "^9.0.0",
+    "nodemailer": "^6.9.0",
+    "ws": "^8.14.0"
+  },
+  "devDependencies": {
+    "@types/bcryptjs": "^2.4.0",
+    "@types/jsonwebtoken": "^9.0.0",
+    "@types/node": "^20.0.0",
+    "@types/ws": "^8.5.0",
+    "prisma": "^5.0.0",
+    "typescript": "^5.0.0"
+  }
+}

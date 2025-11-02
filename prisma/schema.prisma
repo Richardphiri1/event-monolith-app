@@ -1,0 +1,46 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  role      String   @default("ATTENDEE")
+  createdAt DateTime @default(now())
+
+  events Event[] @relation("EventOrganizer")
+  rsvps  RSVP[]
+}
+
+model Event {
+  id          String   @id @default(cuid())
+  title       String
+  description String
+  date        DateTime
+  location    String
+  organizerId String
+  approved    Boolean  @default(false)
+  createdAt   DateTime @default(now())
+
+  organizer User  @relation("EventOrganizer", fields: [organizerId], references: [id], onDelete: Cascade)
+  rsvps     RSVP[]
+}
+
+model RSVP {
+  id        String   @id @default(cuid())
+  userId    String
+  eventId   String
+  status    String   @default("GOING")
+  createdAt DateTime @default(now())
+
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  event Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, eventId])
+}

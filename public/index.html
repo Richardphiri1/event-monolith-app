@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Management App</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="app">
+        <!-- Navigation -->
+        <nav class="navbar">
+            <div class="nav-brand">🎉 Event Manager</div>
+            <div class="nav-links">
+                <button id="loginBtn" class="btn-outline">Login</button>
+                <button id="signupBtn" class="btn-primary">Sign Up</button>
+                <button id="logoutBtn" class="btn-outline" style="display: none;">Logout</button>
+            </div>
+        </nav>
+
+        <!-- Auth Forms -->
+        <div id="authSection" class="section">
+            <div class="auth-container">
+                <!-- Login Form -->
+                <div id="loginForm" class="auth-form">
+                    <h2>Login</h2>
+                    <input type="email" id="loginEmail" placeholder="Email" required>
+                    <input type="password" id="loginPassword" placeholder="Password" required>
+                    <button onclick="login()" class="btn-primary">Login</button>
+                    <p>Don't have an account? <a href="#" onclick="showSignup()">Sign up</a></p>
+                </div>
+
+                <!-- Signup Form -->
+                <div id="signupForm" class="auth-form" style="display: none;">
+                    <h2>Sign Up</h2>
+                    <input type="email" id="signupEmail" placeholder="Email" required>
+                    <input type="password" id="signupPassword" placeholder="Password" required>
+                    <select id="signupRole">
+                        <option value="ATTENDEE">Attendee</option>
+                        <option value="ORGANIZER">Organizer</option>
+                        <option value="ADMIN">Admin</option>
+                    </select>
+                    <button onclick="signup()" class="btn-primary">Sign Up</button>
+                    <p>Already have an account? <a href="#" onclick="showLogin()">Login</a></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main App (hidden initially) -->
+        <div id="mainApp" class="section" style="display: none;">
+            <div class="container">
+                <!-- User Info -->
+                <div class="user-info">
+                    <h3>Welcome, <span id="userEmail"></span>!</h3>
+                    <small>Role: <span id="userRole"></span></small>
+                </div>
+
+                <!-- Create Event Form (for organizers/admins) -->
+                <div id="createEventSection" class="card" style="display: none;">
+                    <h3>Create New Event</h3>
+                    <input type="text" id="eventTitle" placeholder="Event Title" required>
+                    <textarea id="eventDescription" placeholder="Event Description" required></textarea>
+                    <input type="datetime-local" id="eventDate" required>
+                    <input type="text" id="eventLocation" placeholder="Location" required>
+                    <button onclick="createEvent()" class="btn-primary">Create Event</button>
+                </div>
+
+                <!-- Events List -->
+                <div class="events-section">
+                    <h3>Upcoming Events</h3>
+                    <div id="eventsList" class="events-grid">
+                        <!-- Events will be loaded here -->
+                    </div>
+                </div>
+
+                <!-- Realtime Updates -->
+                <div class="realtime-section">
+                    <h3>🔔 Realtime Updates</h3>
+                    <div id="realtimeLogs" class="logs-container">
+                        <div class="log-entry">Connected to realtime updates...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Loading Spinner -->
+        <div id="loading" class="loading" style="display: none;">Loading...</div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
