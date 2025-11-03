@@ -10,6 +10,7 @@
     "db:studio": "prisma studio"
   },
   "dependencies": {
+    "@types/bun": "latest"
     "@elysiajs/cors": "^0.8.0",
     "@elysiajs/static": "^1.4.5",
     "@elysiajs/swagger": "^0.8.0",
