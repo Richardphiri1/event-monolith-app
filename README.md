@@ -3,8 +3,8 @@
 A full-stack monolith event management application with authentication, user roles, and realtime features built with Elysia.js, Bun, and modern web technologies.
 
 ## 🚀 Live Demo
-- **Frontend**: [https://event-monolith-app-shgj.onrender.com](https://event-monolith-app.onrender.com)
-- **API Docs**: [https://your-app.onrender.com/swagger](https://your-app.onrender.com/swagger)
+- **Frontend**: [https://event-monolith-app-shgj.onrender.com](https://event-monolith-app-shgj.onrender.com)
+- **API Docs**: [https://event-monolith-app-shgj.onrender.com/swagger](https://event-monolith-app-shgj.onrender.com/swagger)
 
 ## ✨ Features
 
