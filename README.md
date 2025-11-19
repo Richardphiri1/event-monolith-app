@@ -49,6 +49,6 @@ A full-stack monolith event management application with authentication, user rol
 - **Storage**: Local Storage for sessions
 
 ## 📁 Project Members 
-- **Richard Phiri**:   -2410401 backend developer
-- **Ernest chiwala**:  -2410170 frontend developer 
-- **velarie kasongo**: -2410073 testing 
+- **Richard Phiri**:   2410401 backend developer
+- **Ernest chiwala**:  2410170 frontend developer 
+- **velarie kasongo**: 2410073 testing 
