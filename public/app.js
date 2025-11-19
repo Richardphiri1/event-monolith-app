@@ -326,7 +326,7 @@ function initWebSocket() {
         ws.close();
     }
 
-    ws = new WebSocket(`${WS_BASE}/ws`);
+   ws = new WebSocket(`wss://event-monolith-app-shgj.onrender.com/ws`);
 
     ws.onopen = () => {
         addRealtimeLog('✅ Connected to realtime updates');
