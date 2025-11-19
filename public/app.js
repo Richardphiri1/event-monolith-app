@@ -1,4 +1,5 @@
 const API_BASE = 'https://event-monolith-app-shgj.onrender.com/api';
+const WS_BASE = 'wss://event-monolith-app-shgj.onrender.com';
 let currentUser = null;
 let ws = null;
 
@@ -325,7 +326,7 @@ function initWebSocket() {
         ws.close();
     }
 
-    ws = new WebSocket(`ws://localhost:3000/ws`);
+    ws = new WebSocket(`${WS_BASE}/ws`);
 
     ws.onopen = () => {
         addRealtimeLog('✅ Connected to realtime updates');
