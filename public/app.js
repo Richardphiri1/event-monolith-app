@@ -1,4 +1,4 @@
-const API_BASE = 'https://event-monolith-app-shgj.onrender.com/api';
+const API_BASE = 'https://event-monolith-app-shgj.onrender.com';
 const WS_BASE = 'wss://event-monolith-app-shgj.onrender.com';
 let currentUser = null;
 let ws = null;
