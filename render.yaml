@@ -13,9 +13,3 @@ services:
         value: production
       - key: JWT_SECRET
         generateValue: true
-      - key: DATABASE_URL
-        value: "file:./dev.db"  # Using SQLite for simplicity
-      - key: ETHEREAL_EMAIL
-        value: "test@ethereal.email"
-      - key: ETHEREAL_PASSWORD  
-        value: "test-password"
