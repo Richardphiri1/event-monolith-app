@@ -3,7 +3,14 @@ import { swagger } from '@elysiajs/swagger';
 import { cors } from '@elysiajs/cors';
 
 const app = new Elysia()
-  .use(cors())
+  
+.use(cors({
+  origin: [
+    'https://event-monolith-app-shgj.onrender.com',
+    'http://localhost:3000' // for local development
+  ],
+  credentials: true
+}))
   .use(swagger({
     documentation: {
       info: {
