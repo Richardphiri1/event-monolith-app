@@ -48,4 +48,7 @@ A full-stack monolith event management application with authentication, user rol
 - **Realtime**: Native WebSocket API
 - **Storage**: Local Storage for sessions
 
-## 📁 Project Structure
+## 📁 Project Members 
+Richard Phiri   -2410401 backend developer
+Ernest chiwala  -2410170 frontend developer 
+velarie kasongo -2410073 testing 
