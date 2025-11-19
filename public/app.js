@@ -1,4 +1,4 @@
-const API_BASE = 'http://localhost:3000';
+const API_BASE = 'https://event-monolith-app-shgj.onrender.com';
 let currentUser = null;
 let ws = null;
 
