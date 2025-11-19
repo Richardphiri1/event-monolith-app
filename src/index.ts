@@ -119,10 +119,10 @@ const app = new Elysia()
       }));
     }
   });
-
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, '0.0.0.0' () => {
-  console.log(`🚀 Server running at http://localhost:${PORT}`);
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`🚀 Server running on port ${PORT}`);
   console.log(`📚 Swagger docs at http://localhost:${PORT}/swagger`);
   console.log(`🎨 Frontend available at https://event-monolith-app-shgj.onrender.com`);
+});
 });
