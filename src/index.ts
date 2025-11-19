@@ -125,4 +125,3 @@ app.listen(PORT, '0.0.0.0', () => {
   console.log(`📚 Swagger docs at http://localhost:${PORT}/swagger`);
   console.log(`🎨 Frontend available at https://event-monolith-app-shgj.onrender.com`);
 });
-});
