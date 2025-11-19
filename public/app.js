@@ -23,19 +23,36 @@ document.addEventListener('DOMContentLoaded', () => {
 function showLogin() {
     loginForm.style.display = 'block';
     signupForm.style.display = 'none';
+    // Clear forms when switching
+    document.getElementById('loginEmail').value = '';
+    document.getElementById('loginPassword').value = '';
 }
 
 function showSignup() {
     loginForm.style.display = 'none';
     signupForm.style.display = 'block';
+    // Clear forms when switching
+    document.getElementById('signupEmail').value = '';
+    document.getElementById('signupPassword').value = '';
 }
 
 async function login() {
-    const email = document.getElementById('loginEmail').value;
+    const email = document.getElementById('loginEmail').value.trim();
     const password = document.getElementById('loginPassword').value;
 
     if (!email || !password) {
         alert('Please fill in all fields');
+        return;
+    }
+
+    // Enhanced validation
+    if (!isValidEmail(email)) {
+        alert('Please enter a valid email address');
+        return;
+    }
+
+    if (password.length < 3) {
+        alert('Password must be at least 3 characters');
         return;
     }
 
@@ -59,7 +76,7 @@ async function login() {
             showMainApp();
             initWebSocket();
         } else {
-            alert(data.error || 'Login failed');
+            alert(data.error || 'Login failed - please check your credentials');
         }
     } catch (error) {
         alert('Login error: ' + error.message);
@@ -69,12 +86,23 @@ async function login() {
 }
 
 async function signup() {
-    const email = document.getElementById('signupEmail').value;
+    const email = document.getElementById('signupEmail').value.trim();
     const password = document.getElementById('signupPassword').value;
     const role = document.getElementById('signupRole').value;
 
     if (!email || !password) {
         alert('Please fill in all fields');
+        return;
+    }
+
+    // Enhanced validation
+    if (!isValidEmail(email)) {
+        alert('Please enter a valid email address');
+        return;
+    }
+
+    if (password.length < 3) {
+        alert('Password must be at least 3 characters');
         return;
     }
 
@@ -92,13 +120,13 @@ async function signup() {
         const data = await response.json();
 
         if (response.ok) {
-            alert('Signup successful! Please login.');
+            alert('Signup successful! Please login with your new account.');
             showLogin();
             // Clear form
             document.getElementById('signupEmail').value = '';
             document.getElementById('signupPassword').value = '';
         } else {
-            alert(data.error || 'Signup failed');
+            alert(data.error || 'Signup failed - please try again');
         }
     } catch (error) {
         alert('Signup error: ' + error.message);
@@ -123,9 +151,16 @@ function checkAuthStatus() {
     const user = localStorage.getItem('user');
     
     if (token && user) {
-        currentUser = JSON.parse(user);
-        showMainApp();
-        initWebSocket();
+        try {
+            currentUser = JSON.parse(user);
+            showMainApp();
+            initWebSocket();
+        } catch (error) {
+            // Clear invalid data
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            showAuth();
+        }
     } else {
         showAuth();
     }
@@ -172,42 +207,48 @@ async function loadEvents() {
             },
         });
 
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
         const data = await response.json();
 
-        if (response.ok) {
-            displayEvents(data.events || []);
+        if (data.events) {
+            displayEvents(data.events);
         } else {
-            console.error('Failed to load events:', data.error);
+            console.error('No events found in response');
+            displayEvents([]);
         }
     } catch (error) {
         console.error('Error loading events:', error);
+        displayEvents([]);
     }
 }
 
 function displayEvents(events) {
     const eventsList = document.getElementById('eventsList');
     
-    if (events.length === 0) {
+    if (!events || events.length === 0) {
         eventsList.innerHTML = '<div class="event-card">No events found. Create one!</div>';
         return;
     }
 
     eventsList.innerHTML = events.map(event => `
         <div class="event-card">
-            <h4>${event.title}</h4>
+            <h4>${escapeHtml(event.title)}</h4>
             <div class="event-meta">
                 <div>📅 ${new Date(event.date).toLocaleString()}</div>
-                <div>📍 ${event.location}</div>
+                <div>📍 ${escapeHtml(event.location)}</div>
                 <div>👤 Organized by: ${event.organizer?.email || 'Unknown'}</div>
                 <div>${event.approved ? '✅ Approved' : '⏳ Pending Approval'}</div>
             </div>
-            <p>${event.description}</p>
+            <p>${escapeHtml(event.description)}</p>
             <div class="event-actions">
-                ${currentUser.role === 'ATTENDEE' ? `
+                ${currentUser && currentUser.role === 'ATTENDEE' ? `
                     <button class="btn-primary" onclick="rsvpToEvent('${event.id}', 'GOING')">Going</button>
                     <button class="btn-outline" onclick="rsvpToEvent('${event.id}', 'MAYBE')">Maybe</button>
                 ` : ''}
-                ${currentUser.role === 'ADMIN' && !event.approved ? `
+                ${currentUser && currentUser.role === 'ADMIN' && !event.approved ? `
                     <button class="btn-primary" onclick="approveEvent('${event.id}')">Approve</button>
                 ` : ''}
             </div>
@@ -216,18 +257,28 @@ function displayEvents(events) {
 }
 
 async function createEvent() {
-    const title = document.getElementById('eventTitle').value;
-    const description = document.getElementById('eventDescription').value;
+    const title = document.getElementById('eventTitle').value.trim();
+    const description = document.getElementById('eventDescription').value.trim();
     const date = document.getElementById('eventDate').value;
-    const location = document.getElementById('eventLocation').value;
+    const location = document.getElementById('eventLocation').value.trim();
 
     if (!title || !description || !date || !location) {
         alert('Please fill in all fields');
         return;
     }
 
+    // Date validation
+    const eventDate = new Date(date);
+    if (eventDate <= new Date()) {
+        alert('Event date must be in the future');
+        return;
+    }
+
     const token = localStorage.getItem('token');
-    if (!token) return;
+    if (!token) {
+        alert('Please login to create events');
+        return;
+    }
 
     showLoading(true);
 
@@ -241,7 +292,7 @@ async function createEvent() {
             body: JSON.stringify({
                 title,
                 description,
-                date: new Date(date).toISOString(),
+                date: eventDate.toISOString(),
                 location,
             }),
         });
@@ -268,7 +319,10 @@ async function createEvent() {
 
 async function rsvpToEvent(eventId, status) {
     const token = localStorage.getItem('token');
-    if (!token) return;
+    if (!token) {
+        alert('Please login to RSVP');
+        return;
+    }
 
     try {
         const response = await fetch(`${API_BASE}/events/${eventId}/rsvp`, {
@@ -302,7 +356,7 @@ async function approveEvent(eventId) {
             method: 'PUT',
             headers: {
                 'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json',
+                'Content-Type': 'application/json',
             },
             body: JSON.stringify({}),
         });
@@ -326,30 +380,38 @@ function initWebSocket() {
         ws.close();
     }
 
-   ws = new WebSocket(`wss://event-monolith-app-shgj.onrender.com/ws`);
+    try {
+        ws = new WebSocket(`${WS_BASE}/ws`);
 
-    ws.onopen = () => {
-        addRealtimeLog('✅ Connected to realtime updates');
-    };
+        ws.onopen = () => {
+            addRealtimeLog('✅ Connected to realtime updates');
+        };
 
-    ws.onmessage = (event) => {
-        const data = JSON.parse(event.data);
-        addRealtimeLog(`📨 ${data.type}: ${data.message}`);
-        
-        // Reload events when updates are received
-        if (data.type === 'EVENT_UPDATE' || data.type === 'RSVP_UPDATE') {
-            loadEvents();
-        }
-    };
+        ws.onmessage = (event) => {
+            try {
+                const data = JSON.parse(event.data);
+                addRealtimeLog(`📨 ${data.type}: ${data.message}`);
+                
+                // Reload events when updates are received
+                if (data.type === 'EVENT_UPDATE' || data.type === 'RSVP_UPDATE') {
+                    loadEvents();
+                }
+            } catch (error) {
+                console.error('Error parsing WebSocket message:', error);
+            }
+        };
 
-    ws.onclose = () => {
-        addRealtimeLog('🔴 Disconnected from realtime updates');
-    };
+        ws.onclose = () => {
+            addRealtimeLog('🔴 Disconnected from realtime updates');
+        };
 
-    ws.onerror = (error) => {
-        addRealtimeLog('❌ WebSocket error');
-        console.error('WebSocket error:', error);
-    };
+        ws.onerror = (error) => {
+            addRealtimeLog('❌ WebSocket error');
+            console.error('WebSocket error:', error);
+        };
+    } catch (error) {
+        console.error('Failed to initialize WebSocket:', error);
+    }
 }
 
 function addRealtimeLog(message) {
@@ -365,6 +427,21 @@ function addRealtimeLog(message) {
 // Utility functions
 function showLoading(show) {
     document.getElementById('loading').style.display = show ? 'flex' : 'none';
+}
+
+function isValidEmail(email) {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+}
+
+function escapeHtml(unsafe) {
+    if (!unsafe) return '';
+    return unsafe
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
 }
 
 // Event listeners
