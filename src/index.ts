@@ -117,5 +117,5 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`🚀 Server running at http://localhost:${PORT}`);
   console.log(`📚 Swagger docs at http://localhost:${PORT}/swagger`);
-  console.log(`🎨 Frontend available at http://localhost:${PORT}`);
+  console.log(`🎨 Frontend available at https://event-monolith-app-shgj.onrender.com`);
 });
