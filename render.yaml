@@ -4,10 +4,12 @@ services:
     env: node
     plan: free
     buildCommand: |
-      npm install
-      npx prisma generate
-      npm run build
-    startCommand: npm start
+  curl -fsSL https://bun.sh/install | bash
+  export BUN_INSTALL="/opt/render/.bun"
+  export PATH="$BUN_INSTALL/bin:$PATH"
+  bun install
+  bunx prisma generate
+startCommand: bun run src/index.ts
     envVars:
       - key: NODE_ENV
         value: production
