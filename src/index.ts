@@ -30,24 +30,66 @@ const app = new Elysia()
   .get('/app.js', () => Bun.file('public/app.js'))
   .get('/health', () => ({ status: 'OK', timestamp: new Date().toISOString() }))
   
-  // Auth endpoints
-  .post('/auth/signup', ({ body }) => ({ 
-    message: 'User created successfully', 
-    user: { 
-      id: 'mock-id', 
-      email: (body as any).email, 
-      role: (body as any).role || 'ATTENDEE' 
-    } 
-  }))
-  .post('/auth/login', ({ body }) => ({ 
-    message: 'Login successful', 
-    token: 'mock-jwt-token-12345',
-    user: { 
-      id: 'mock-id', 
-      email: (body as any).email, 
-      role: 'ATTENDEE' 
+  // Auth endpoints - WITH VALIDATION
+  .post('/auth/signup', ({ body, set }) => {
+    const { email, password, role } = body as any;
+    
+    // Basic validation
+    if (!email || !password) {
+      set.status = 400;
+      return { error: 'Email and password required' };
     }
-  }))
+    
+    if (!email.includes('@')) {
+      set.status = 400;
+      return { error: 'Invalid email format' };
+    }
+    
+    if (password.length < 3) {
+      set.status = 400;
+      return { error: 'Password must be at least 3 characters' };
+    }
+    
+    // Mock success response
+    return { 
+      message: 'User created successfully', 
+      user: { 
+        id: 'mock-id', 
+        email: email, 
+        role: role || 'ATTENDEE' 
+      } 
+    };
+  })
+  .post('/auth/login', ({ body, set }) => {
+    const { email, password } = body as any;
+    
+    // Basic validation
+    if (!email || !password) {
+      set.status = 400;
+      return { error: 'Email and password required' };
+    }
+    
+    if (!email.includes('@')) {
+      set.status = 400;
+      return { error: 'Invalid email format' };
+    }
+    
+    if (password.length < 3) {
+      set.status = 400;
+      return { error: 'Password must be at least 3 characters' };
+    }
+    
+    // Mock success response
+    return { 
+      message: 'Login successful', 
+      token: 'mock-jwt-token-12345',
+      user: { 
+        id: 'mock-id', 
+        email: email, 
+        role: 'ATTENDEE' 
+      }
+    };
+  })
   
   // Event endpoints
   .get('/events', () => ({ 
